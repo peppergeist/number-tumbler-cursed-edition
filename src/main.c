@@ -91,9 +91,9 @@ int read_guess(int try, int diff)
 		}
 		if ((c == 8 || c == 127) && digit > 0)
 		{
-			current[digit] = 10;
-			mvprintw(8 + try, 15 + digit, "_");
 			--digit;
+			current[digit] = 10;
+			mvprintw(8 + try, 16 + digit, "_");
 		}
 		if (c == '\n' && digit == 4)
 		{
@@ -107,6 +107,20 @@ int read_guess(int try, int diff)
 	return final;
 }
 
+void show_rules()
+{
+	draw_box(52, 76, 8, 18);
+	draw_box(52, 76, 8, 10);
+	mvprintw(9, 59, "ANSWER KEY");
+	mvprintw(11, 54, "+ : worth 25 points");
+	mvprintw(12, 54, "one number is correct");
+	mvprintw(13, 54, "- : worth 10 points");
+	mvprintw(14, 54, "one number is correct,");
+	mvprintw(15, 54, "  but in wrong digit");
+	mvprintw(16, 54, ". : worth 0 points");
+	mvprintw(17, 55, "one number is wrong");
+}
+
 int main()
 {
 	srand(time(NULL));
@@ -117,9 +131,9 @@ int main()
 	noecho();
 	clear();
 	bool playing = true;
-	draw_border();
 	while (playing)
 	{
+		draw_border();
 		/* read in difficulty */
 		int difficulty = get_difficulty();
 		draw_box(0, 79, 2, 23);
@@ -148,8 +162,10 @@ int main()
 				break;
 			}
 		}
+		show_rules();
 		int tries = 0;	/* current turn */
 		int total_score = 0;
+		bool won = false;
 		int guess[4] = {10, 10, 10, 10};	/* stores the 4-digit guess */
 		int answer[4] =
 		{
@@ -162,6 +178,13 @@ int main()
 		mvprintw(7, 5, "------+------------+-----------+--------");
 		for (tries = 0; tries < 10; ++tries)
 		{
+			if (won)
+			{
+				mvprintw(8 + tries, 5,
+					"  %2d  |    BONUS POINTS!!!     | +100   ", tries + 1);
+				total_score += 100;
+				continue;
+			}
 			mvprintw(8 + tries, 5,
 				"  %2d  |    ____    |    ????   |        ", tries + 1);
 			int guess_unparsed = read_guess(tries, difficulty);
@@ -182,8 +205,8 @@ int main()
 				{
 					++correct;
 					--incorrect;
-					guess[i] = guess[i] + 10;
-					answer[i] = answer[i] - 10;
+					guess[i] += 10;
+					answer[i] -= 10;
 				}
 			}
 			/* then check for almost-correct answers */
@@ -195,8 +218,8 @@ int main()
 					{
 						++almost;
 						--incorrect;
-						guess[g] = guess[g] + 10;
-						answer[a] = answer[a] - 10;
+						guess[g] += 10;
+						answer[a] -= 10;
 					}
 				}
 			}
@@ -221,9 +244,54 @@ int main()
 					answer[i] = answer[i] + 10;
 				}
 			}
-			mvprintw(8 + tries, 38, "%4d", roundscore);
+			mvprintw(8 + tries, 38, "+%3d", roundscore);
 			total_score += roundscore;
+			if (correct == 4)
+			{
+				won = true;
+			}
+		}
+		if (won)
+		{
+			draw_boxed_text(5, 20,
+					"You won! Your final score is      points.");
+			mvprintw(20, 34, "%4d", total_score);
+		}
+		else
+		{
+			draw_boxed_text(4, 20,
+				"You lost! Your final score is      points.");
+			mvprintw(20, 34, "%4d", total_score);
+		}
+		draw_boxed_text(54, 20, "Play again? (y/n) [ ]");
+		{
+			while(true)
+			{
+				char c = getch();
+				if (c == 'y')
+				{
+					attron(A_STANDOUT);
+					mvprintw(20, 73, "y");
+					attroff(A_STANDOUT);
+					playing = true;
+				}
+				if (c == 'n')
+				{
+					attron(A_STANDOUT);
+					mvprintw(20, 73, "n");
+					attroff(A_STANDOUT);
+					playing = false;
+				}
+				if (c == '\n')
+				{
+					break;
+				}
+			}
 		}
 	}
+	clear();
+	mvprintw(0, 0, "Be seeing you...");
+	getch();
+	endwin();
 	return 0;
 }
