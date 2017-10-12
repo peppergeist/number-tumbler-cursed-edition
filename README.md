@@ -21,4 +21,4 @@ Run the program numbertumblercursededition in your terminal.
 
 * The maximum score is 1000 points, from guessing the correct answer on the first try.
 
-## Happy tumbling!
+**Happy tumbling!**
