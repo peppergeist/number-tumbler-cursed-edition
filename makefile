@@ -2,7 +2,7 @@
 CXX         := gcc
 
 #The Target Binary Program
-TARGET      := numbertumbercursededition
+TARGET      := numbertumblerce
 
 #The Directories, Source, Includes, Objects, Binary and Resources
 SRCDIR      := src
