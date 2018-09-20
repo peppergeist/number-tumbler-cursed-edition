@@ -1,8 +1,8 @@
 # number-tumbler-cursed-edition
-a remake of number tumbler, not written in a joke language, implementing using the curses library
+Number Tumbler Cursed Edition is a remake of Number Tumbler, not written in a joke language, implementing using the curses library.
 
 ## Usage
-Run the program numbertumblerce in your terminal.
+Run the program `numbertumblerce` in your terminal.
 
 ## Rules
 1. First, choose a difficulty. This determines which numbers appear in the code. A difficulty of 1 means that only the digits 0 through 5 can appear. A difficulty of 5, the maximum, means all digits between 0 and 9 can appear.
